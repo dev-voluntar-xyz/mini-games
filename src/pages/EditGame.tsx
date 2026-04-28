@@ -20,12 +20,17 @@ export default function EditGame() {
   const [newLevelHtml, setNewLevelHtml] = useState('');
 
   useEffect(() => {
-    if (game) {
-      setTitle(game.title);
-      setDescription(game.description || '');
-      setHtmlCode(game.htmlCode);
+    // Only set initial state once to avoid continuous re-renders from LiveQuery
+    if (game && !title) {
+      // Defer state update to next tick to avoid cascading render warnings
+      setTimeout(() => {
+        setTitle(game.title);
+        setDescription(game.description || '');
+        setHtmlCode(game.htmlCode);
+      }, 0);
     }
-  }, [game]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game?.id]);
 
   if (!game) return <div>Loading...</div>;
 
