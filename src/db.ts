@@ -132,6 +132,199 @@ export const seedDatabase = async () => {
 </html>
     `;
 
+    const snakeGameHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 1rem; margin: 0; background-color: #222; color: #fff; }
+        canvas { background-color: #000; border: 2px solid #555; display: block; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        #score-board { display: flex; justify-content: space-around; font-size: 1.5rem; margin-bottom: 1rem; }
+        .controls { margin-top: 1rem; color: #aaa; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <h1 id="level-title">Snake Game - Level 1</h1>
+    <div id="score-board">
+        <div>Score: <span id="score">0</span></div>
+        <div>High Score: <span id="high-score">0</span></div>
+    </div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">Use Arrow Keys to move.</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridSize = 20;
+        let snake = [{ x: 200, y: 200 }];
+        let food = { x: 100, y: 100 };
+        let dx = 0;
+        let dy = 0;
+        let score = 0;
+        let highScore = 0;
+        let gameLoopTimeout;
+        let currentLevelInfo = null;
+        let baseSpeed = 150;
+        let gameOver = false;
+
+        const updateScoreDisplay = () => {
+            document.getElementById('score').innerText = score;
+            document.getElementById('high-score').innerText = highScore;
+        };
+
+        const drawRect = (x, y, color) => {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, gridSize - 2, gridSize - 2);
+        };
+
+        const randomFoodPosition = () => {
+            return {
+                x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
+                y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize
+            };
+        };
+
+        const resetGame = () => {
+            snake = [{ x: 200, y: 200 }];
+            food = randomFoodPosition();
+            dx = 0;
+            dy = 0;
+            score = 0;
+            gameOver = false;
+            updateScoreDisplay();
+            gameLoop();
+        };
+
+        const update = () => {
+            if (dx === 0 && dy === 0) return; // Not started moving yet
+
+            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // Wall collision
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height) {
+                gameOver = true;
+                return;
+            }
+
+            // Self collision
+            for (let i = 0; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    gameOver = true;
+                    return;
+                }
+            }
+
+            snake.unshift(head);
+
+            // Food collision
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                if (score > highScore) {
+                    highScore = score;
+                    saveProgress();
+                }
+                updateScoreDisplay();
+                food = randomFoodPosition();
+            } else {
+                snake.pop();
+            }
+        };
+
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw food
+            drawRect(food.x, food.y, 'red');
+
+            // Draw snake
+            snake.forEach((part, index) => {
+                drawRect(part.x, part.y, index === 0 ? '#4CAF50' : '#81C784');
+            });
+
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+                ctx.font = '20px Arial';
+                ctx.fillText('Press Space to Restart', canvas.width / 2, canvas.height / 2 + 40);
+            }
+        };
+
+        const gameLoop = () => {
+            if (gameOver) {
+                draw();
+                return;
+            }
+            update();
+            draw();
+            let currentSpeed = baseSpeed - Math.min(score, 100);
+            gameLoopTimeout = setTimeout(gameLoop, currentSpeed);
+        };
+
+        document.addEventListener('keydown', (e) => {
+            if (gameOver && e.code === 'Space') {
+                resetGame();
+                return;
+            }
+            if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -gridSize; }
+            if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = gridSize; }
+            if (e.key === 'ArrowLeft' && dx === 0) { dx = -gridSize; dy = 0; }
+            if (e.key === 'ArrowRight' && dx === 0) { dx = gridSize; dy = 0; }
+        });
+
+        const saveProgress = async () => {
+            if (window.GameAPI) {
+                await window.GameAPI.setProgress(JSON.stringify({ highScore }));
+            }
+        };
+
+        const initGame = async () => {
+            if (window.GameAPI) {
+                try {
+                    // Load progress
+                    const progressDataStr = await window.GameAPI.getProgress();
+                    if (progressDataStr) {
+                        const progress = JSON.parse(progressDataStr);
+                        if (progress.highScore) {
+                            highScore = progress.highScore;
+                        }
+                    }
+
+                    // Load level
+                    currentLevelInfo = await window.GameAPI.getCurrentLevel();
+                    if (currentLevelInfo && currentLevelInfo.levelHtml) {
+                        try {
+                           const levelData = JSON.parse(currentLevelInfo.levelHtml);
+                           document.getElementById('level-title').innerText = levelData.title || ('Snake Game - Level ' + currentLevelInfo.levelNumber);
+                           if (levelData.speed) {
+                               baseSpeed = levelData.speed;
+                           }
+                        } catch(e) {
+                           document.getElementById('level-title').innerText = 'Snake Game - Level ' + currentLevelInfo.levelNumber;
+                        }
+                    }
+                } catch(e) {
+                    console.error('Error initing Game API', e);
+                }
+            }
+            updateScoreDisplay();
+            draw(); // Draw initial state
+        };
+
+        // Initialize when API is ready
+        if (window.GameAPI) {
+            initGame();
+        } else {
+            window.addEventListener('GameAPIReady', initGame);
+        }
+    </script>
+</body>
+</html>
+    `;
+
     const gameId = await db.games.add({
       title: 'Simple Clicker',
       description: 'A basic clicker game to test the platform API.',
@@ -150,6 +343,33 @@ export const seedDatabase = async () => {
           gameId,
           levelNumber: 2,
           levelHtml: JSON.stringify({ title: 'Level 2: Double Points', multiplier: 2 })
+        }
+      ]);
+    }
+
+    const snakeGameId = await db.games.add({
+      title: 'Classic Snake',
+      description: 'A more complex arcade snake game with collision detection and speed levels.',
+      htmlCode: snakeGameHtml,
+      createdAt: Date.now() + 1000 // Ensure slightly different creation time
+    });
+
+    if (snakeGameId !== undefined) {
+      await db.levels.bulkAdd([
+        {
+          gameId: snakeGameId,
+          levelNumber: 1,
+          levelHtml: JSON.stringify({ title: 'Level 1: Easy Peasy', speed: 150 })
+        },
+        {
+          gameId: snakeGameId,
+          levelNumber: 2,
+          levelHtml: JSON.stringify({ title: 'Level 2: Getting Faster', speed: 100 })
+        },
+        {
+          gameId: snakeGameId,
+          levelNumber: 3,
+          levelHtml: JSON.stringify({ title: 'Level 3: Light Speed', speed: 60 })
         }
       ]);
     }

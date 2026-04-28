@@ -1,0 +1,14 @@
+1. **Add a more complex game to the database seed data**
+   - I will use `replace_with_git_merge_diff` to modify `src/db.ts` to include a new HTML string for a "Snake Game".
+   - The game will integrate with `window.GameAPI` to read the current level configuration (e.g. grid size and speed) and save high score progress.
+   - It will feature a canvas-based rendering with arrow key controls, collision detection, and score tracking.
+2. **Update the `seedDatabase` function**
+   - I will use `replace_with_git_merge_diff` to modify the `seedDatabase` function to insert the Snake game HTML string and add the Snake game object to `db.games` and multiple levels for the Snake game to `db.levels`.
+3. **Verify the edit in `src/db.ts`**
+   - Read the modified sections of `src/db.ts` using `cat src/db.ts` to verify the game strings and seed logic were written correctly without syntax errors.
+4. **Run Verification Scripts**
+   - Execute `npm run build` and `npm run lint` in a bash session to ensure no regressions were introduced and the project compiles.
+5. **Pre-commit Steps**
+   - Complete pre-commit steps to ensure proper testing, verification, review, and reflection are done.
+6. **Submit**
+   - Submit the changes.
