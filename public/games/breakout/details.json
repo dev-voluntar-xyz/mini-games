@@ -1,0 +1,19 @@
+{
+  "id": "breakout",
+  "title": "Breakout",
+  "description": "A classic brick breaking game.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Easy\",\"speed\":2,\"rows\":3}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Medium\",\"speed\":3,\"rows\":4}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3: Hard\",\"speed\":4,\"rows\":5}"
+    }
+  ]
+}

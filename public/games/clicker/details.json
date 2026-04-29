@@ -1,0 +1,15 @@
+{
+  "id": "clicker",
+  "title": "Simple Clicker",
+  "description": "A basic clicker game to test the platform API.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Basic Clicking\",\"multiplier\":1}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Double Points\",\"multiplier\":2}"
+    }
+  ]
+}

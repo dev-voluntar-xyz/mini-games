@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 2rem; }
+        button { padding: 1rem 2rem; font-size: 1.2rem; cursor: pointer; }
+        #score { font-size: 2rem; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+    <h1>Clicker Game</h1>
+    <h2 id="level-title">Level 1</h2>
+    <div id="score">Score: 0</div>
+    <button id="click-btn">Click Me!</button>
+
+    <script>
+        let score = 0;
+        let currentLevelInfo = null;
+
+        const updateScoreDisplay = () => {
+            document.getElementById('score').innerText = 'Score: ' + score;
+        };
+
+        const initGame = async () => {
+            if (window.GameAPI) {
+                try {
+                    // Load progress
+                    const progressDataStr = await window.GameAPI.getProgress();
+                    if (progressDataStr) {
+                        const progress = JSON.parse(progressDataStr);
+                        if (progress.score) {
+                            score = progress.score;
+                        }
+                    }
+
+                    // Load level
+                    currentLevelInfo = await window.GameAPI.getCurrentLevel();
+                    if (currentLevelInfo && currentLevelInfo.levelHtml) {
+                        try {
+                           const levelData = JSON.parse(currentLevelInfo.levelHtml);
+                           document.getElementById('level-title').innerText = levelData.title || ('Level ' + currentLevelInfo.levelNumber);
+                        } catch(e) {
+                           document.getElementById('level-title').innerText = 'Level ' + currentLevelInfo.levelNumber;
+                        }
+                    }
+                } catch(e) {
+                    console.error('Error initing Game API', e);
+                }
+            }
+            updateScoreDisplay();
+        };
+
+        document.getElementById('click-btn').addEventListener('click', async () => {
+            let multiplier = 1;
+            if (currentLevelInfo && currentLevelInfo.levelHtml) {
+                try {
+                    const levelData = JSON.parse(currentLevelInfo.levelHtml);
+                    multiplier = levelData.multiplier || 1;
+                } catch(e) {}
+            }
+            score += multiplier;
+            updateScoreDisplay();
+
+            if (window.GameAPI) {
+                await window.GameAPI.setProgress(JSON.stringify({ score }));
+            }
+        });
+
+        // Initialize when API is ready
+        if (window.GameAPI) {
+            initGame();
+        } else {
+            window.addEventListener('GameAPIReady', initGame);
+        }
+    </script>
+</body>
+</html>

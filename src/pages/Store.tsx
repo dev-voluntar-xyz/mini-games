@@ -30,15 +30,19 @@ export default function Store() {
 
   const handleInstall = async (gameInfo: {id: string, title: string, description: string}) => {
     try {
-      const response = await fetch(`/games/${gameInfo.id}/game.json`);
-      if (!response.ok) throw new Error('Failed to fetch game details');
+      const detailsResponse = await fetch(`/games/${gameInfo.id}/details.json`);
+      if (!detailsResponse.ok) throw new Error('Failed to fetch game details');
 
-      const gameData = await response.json();
+      const htmlResponse = await fetch(`/games/${gameInfo.id}/index.html`);
+      if (!htmlResponse.ok) throw new Error('Failed to fetch game HTML code');
+
+      const gameData = await detailsResponse.json();
+      const htmlCode = await htmlResponse.text();
 
       const gameId = await db.games.add({
         title: gameData.title,
         description: gameData.description,
-        htmlCode: gameData.htmlCode,
+        htmlCode: htmlCode,
         createdAt: Date.now() // eslint-disable-line react-hooks/purity
       });
 
@@ -65,27 +69,27 @@ export default function Store() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">App Store</h1>
-      <p className="text-gray-600 dark:text-gray-400">Browse and install sample games.</p>
+      <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">App Store</h1>
+      <p className="text-indigo-200 text-lg">Browse and install sample games.</p>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {availableGames.map((game) => {
           const isInstalled = installedGameIds.has(game.title);
           return (
-            <div key={game.id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex flex-col">
-              <h2 className="text-xl font-semibold mb-2">{game.title}</h2>
-              <p className="text-gray-600 dark:text-gray-400 text-sm flex-1 mb-4">
+            <div key={game.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-lg p-5 flex flex-col hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300">
+              <h2 className="text-2xl font-bold text-white mb-2">{game.title}</h2>
+              <p className="text-indigo-200 text-sm flex-1 mb-6 leading-relaxed">
                 {game.description}
               </p>
               <div className="mt-auto">
                 {isInstalled ? (
-                  <button disabled className="w-full bg-gray-300 dark:bg-gray-700 text-gray-500 cursor-not-allowed py-2 rounded-md font-medium">
+                  <button disabled className="w-full bg-white/5 border border-white/10 text-indigo-300/50 cursor-not-allowed py-2.5 rounded-lg font-semibold">
                     Installed
                   </button>
                 ) : (
                   <button
                     onClick={() => handleInstall(game)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium"
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 text-white py-2.5 rounded-lg font-semibold shadow-md transition-colors"
                   >
                     Install
                   </button>
