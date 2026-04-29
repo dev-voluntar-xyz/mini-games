@@ -16,9 +16,10 @@ export default function GamePlayer() {
   // Auto-select first level when levels load
   useEffect(() => {
     if (levels && levels.length > 0 && !selectedLevelId) {
-      setSelectedLevelId(levels[0].id || null);
+      setTimeout(() => setSelectedLevelId(levels[0].id || null), 0);
     }
-  }, [levels, selectedLevelId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [levels]);
 
   const currentLevel = levels?.find(l => l.id === selectedLevelId) || null;
 
@@ -30,6 +31,7 @@ export default function GamePlayer() {
       
       if (!data || data.source !== 'GameAPI') return;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const respond = (payload: any, error?: string) => {
         if (iframeRef.current?.contentWindow) {
           iframeRef.current.contentWindow.postMessage({
@@ -73,9 +75,9 @@ export default function GamePlayer() {
             console.warn('Unknown GameAPI command:', data.type);
             respond(null, 'Unknown command');
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('GameAPI Error:', err);
-        respond(null, err.message || 'Internal error');
+        respond(null, err instanceof Error ? err.message : 'Internal error');
       }
     };
 
