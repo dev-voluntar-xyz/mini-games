@@ -1,0 +1,17 @@
+[
+  {
+    "id": "clicker",
+    "title": "Simple Clicker",
+    "description": "A basic clicker game to test the platform API."
+  },
+  {
+    "id": "snake",
+    "title": "Classic Snake",
+    "description": "A more complex arcade snake game with collision detection and speed levels."
+  },
+  {
+    "id": "breakout",
+    "title": "Breakout",
+    "description": "A classic brick breaking game."
+  }
+]

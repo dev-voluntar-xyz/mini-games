@@ -5,6 +5,7 @@ import AddGame from './pages/AddGame';
 import EditGame from './pages/EditGame';
 import GamePlayer from './pages/GamePlayer';
 import Settings from './pages/Settings';
+import Store from './pages/Store';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/add" element={<AddGame />} />
+          <Route path="/store" element={<Store />} />
           <Route path="/game/:id/edit" element={<EditGame />} />
           <Route path="/game/:id" element={<GamePlayer />} />
           <Route path="/settings" element={<Settings />} />

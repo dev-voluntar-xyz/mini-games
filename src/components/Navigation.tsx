@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, PlusCircle, Settings as SettingsIcon } from 'lucide-react';
+import { Home, PlusCircle, Settings as SettingsIcon, ShoppingBag } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -12,6 +12,7 @@ export default function Navigation() {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
+    { path: '/store', label: 'Store', icon: ShoppingBag },
     { path: '/add', label: 'Add Game', icon: PlusCircle },
     { path: '/settings', label: 'Settings', icon: SettingsIcon },
   ];
@@ -44,7 +45,7 @@ export default function Navigation() {
         </ul>
       </nav>
 
-      {/* Desktop Top Navigation (Optional, if you want it visible on larger screens) */}
+      {/* Desktop Top Navigation */}
       <nav className="hidden sm:block sticky top-0 w-full bg-white dark:bg-gray-800 shadow z-50">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex justify-between h-16">
