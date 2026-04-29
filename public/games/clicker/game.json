@@ -1,0 +1,16 @@
+{
+  "id": "clicker",
+  "title": "Simple Clicker",
+  "description": "A basic clicker game to test the platform API.",
+  "htmlCode": "\n<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: sans-serif; text-align: center; padding: 2rem; }\n        button { padding: 1rem 2rem; font-size: 1.2rem; cursor: pointer; }\n        #score { font-size: 2rem; margin: 1rem 0; }\n    </style>\n</head>\n<body>\n    <h1>Clicker Game</h1>\n    <h2 id=\"level-title\">Level 1</h2>\n    <div id=\"score\">Score: 0</div>\n    <button id=\"click-btn\">Click Me!</button>\n\n    <script>\n        let score = 0;\n        let currentLevelInfo = null;\n\n        const updateScoreDisplay = () => {\n            document.getElementById('score').innerText = 'Score: ' + score;\n        };\n\n        const initGame = async () => {\n            if (window.GameAPI) {\n                try {\n                    // Load progress\n                    const progressDataStr = await window.GameAPI.getProgress();\n                    if (progressDataStr) {\n                        const progress = JSON.parse(progressDataStr);\n                        if (progress.score) {\n                            score = progress.score;\n                        }\n                    }\n                    \n                    // Load level\n                    currentLevelInfo = await window.GameAPI.getCurrentLevel();\n                    if (currentLevelInfo && currentLevelInfo.levelHtml) {\n                        try {\n                           const levelData = JSON.parse(currentLevelInfo.levelHtml);\n                           document.getElementById('level-title').innerText = levelData.title || ('Level ' + currentLevelInfo.levelNumber);\n                        } catch(e) {\n                           document.getElementById('level-title').innerText = 'Level ' + currentLevelInfo.levelNumber;\n                        }\n                    }\n                } catch(e) {\n                    console.error('Error initing Game API', e);\n                }\n            }\n            updateScoreDisplay();\n        };\n\n        document.getElementById('click-btn').addEventListener('click', async () => {\n            let multiplier = 1;\n            if (currentLevelInfo && currentLevelInfo.levelHtml) {\n                try {\n                    const levelData = JSON.parse(currentLevelInfo.levelHtml);\n                    multiplier = levelData.multiplier || 1;\n                } catch(e) {}\n            }\n            score += multiplier;\n            updateScoreDisplay();\n            \n            if (window.GameAPI) {\n                await window.GameAPI.setProgress(JSON.stringify({ score }));\n            }\n        });\n\n        // Initialize when API is ready\n        if (window.GameAPI) {\n            initGame();\n        } else {\n            window.addEventListener('GameAPIReady', initGame);\n        }\n    </script>\n</body>\n</html>\n",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Basic Clicking\",\"multiplier\":1}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Double Points\",\"multiplier\":2}"
+    }
+  ]
+}
