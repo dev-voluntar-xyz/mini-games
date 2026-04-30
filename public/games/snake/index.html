@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            display: flex; flex-direction: column; align-items: center;
+            background: #222; color: white; font-family: sans-serif;
+            margin: 0; padding: 20px;
+        }
+        canvas { background: #000; border: 2px solid #444; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        #score-board { display: flex; justify-content: space-between; width: 400px; margin-bottom: 10px; }
+        .controls { margin-top: 20px; display: grid; grid-template-columns: 50px 50px 50px; gap: 10px; }
+        .btn { padding: 15px; background: #444; border: none; color: white; border-radius: 5px; cursor: pointer; user-select: none; }
+        .btn:active { background: #666; }
+        #btn-up { grid-column: 2; }
+        #btn-left { grid-column: 1; grid-row: 2; }
+        #btn-down { grid-column: 2; grid-row: 2; }
+        #btn-right { grid-column: 3; grid-row: 2; }
+    </style>
+</head>
+<body>
+    <h2 id="level-title">Snake Game</h2>
+    <div id="score-board">
+        <span id="score-text">Score: 0</span>
+        <span id="high-score-text">High Score: 0</span>
+    </div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="controls">
+        <button class="btn" id="btn-up">▲</button>
+        <button class="btn" id="btn-left">◀</button>
+        <button class="btn" id="btn-down">▼</button>
+        <button class="btn" id="btn-right">▶</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        const gridSize = 20;
+        let tileCount = canvas.width / gridSize;
+
+        let snake = [
+            { x: 10, y: 10 },
+        ];
+        let food = { x: 15, y: 15 };
+
+        let dx = 0;
+        let dy = 0;
+        let nextDx = 0;
+        let nextDy = 0;
+
+        let score = 0;
+        let highScore = 0;
+        let gameSpeed = 100;
+        let gameLoop;
+        let isGameOver = false;
+
+        const updateScoreDisplays = () => {
+            document.getElementById('score-text').innerText = 'Score: ' + score;
+            document.getElementById('high-score-text').innerText = 'High Score: ' + highScore;
+        };
+
+        const resetGame = () => {
+            snake = [{ x: 10, y: 10 }];
+            dx = 0;
+            dy = 0;
+            nextDx = 0;
+            nextDy = 0;
+            score = 0;
+            isGameOver = false;
+            spawnFood();
+            updateScoreDisplays();
+            if(gameLoop) clearTimeout(gameLoop);
+            gameLoop = setTimeout(drawGame, gameSpeed);
+        };
+
+        const spawnFood = () => {
+            food = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount)
+            };
+            // check if food spawned on snake
+            snake.forEach(part => {
+                if(part.x === food.x && part.y === food.y) spawnFood();
+            });
+        };
+
+        const checkCollision = () => {
+            const head = snake[0];
+            if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                return true;
+            }
+            for (let i = 1; i < snake.length; i++) {
+                if (head.x === snake[i].x && head.y === snake[i].y) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        const saveProgress = async () => {
+            if (window.GameAPI) {
+                await window.GameAPI.setProgress(JSON.stringify({ highScore }));
+            }
+        };
+
+        const drawGame = () => {
+            if (isGameOver) return;
+
+            dx = nextDx;
+            dy = nextDy;
+
+            // Move snake
+            if (dx !== 0 || dy !== 0) {
+                const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+                snake.unshift(head);
+
+                if (head.x === food.x && head.y === food.y) {
+                    score += 10;
+                    if(score > highScore) {
+                        highScore = score;
+                        saveProgress();
+                    }
+                    updateScoreDisplays();
+                    spawnFood();
+                } else {
+                    snake.pop();
+                }
+
+                if (checkCollision()) {
+                    isGameOver = true;
+                    ctx.fillStyle = "rgba(0,0,0,0.7)";
+                    ctx.fillRect(0,0, canvas.width, canvas.height);
+                    ctx.fillStyle = "white";
+                    ctx.font = "30px Arial";
+                    ctx.textAlign = "center";
+                    ctx.fillText("Game Over!", canvas.width/2, canvas.height/2);
+                    ctx.font = "16px Arial";
+                    ctx.fillText("Tap or press any key to restart", canvas.width/2, canvas.height/2 + 30);
+                    return;
+                }
+            }
+
+            // Draw background
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw food
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+
+            // Draw snake
+            snake.forEach((part, index) => {
+                ctx.fillStyle = index === 0 ? "#0f0" : "#0c0";
+                ctx.fillRect(part.x * gridSize, part.y * gridSize, gridSize - 2, gridSize - 2);
+            });
+
+            gameLoop = setTimeout(drawGame, gameSpeed);
+        };
+
+        const setDirection = (newDx, newDy) => {
+            if (isGameOver) {
+                resetGame();
+                return;
+            }
+            // Prevent 180 degree turns
+            if (dy === 0 && newDx !== 0) return;
+            if (dx === 0 && newDy !== 0) return;
+
+            nextDx = newDx;
+            nextDy = newDy;
+        };
+
+        document.addEventListener("keydown", (e) => {
+            if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+
+            if (e.key === "ArrowUp" || e.key === "w") setDirection(0, -1);
+            if (e.key === "ArrowDown" || e.key === "s") setDirection(0, 1);
+            if (e.key === "ArrowLeft" || e.key === "a") setDirection(-1, 0);
+            if (e.key === "ArrowRight" || e.key === "d") setDirection(1, 0);
+        });
+
+        // Touch controls
+        document.getElementById('btn-up').addEventListener('pointerdown', (e) => { e.preventDefault(); setDirection(0, -1); });
+        document.getElementById('btn-down').addEventListener('pointerdown', (e) => { e.preventDefault(); setDirection(0, 1); });
+        document.getElementById('btn-left').addEventListener('pointerdown', (e) => { e.preventDefault(); setDirection(-1, 0); });
+        document.getElementById('btn-right').addEventListener('pointerdown', (e) => { e.preventDefault(); setDirection(1, 0); });
+
+        const initGame = async () => {
+            if (window.GameAPI) {
+                try {
+                    // Load progress
+                    const progressDataStr = await window.GameAPI.getProgress();
+                    if (progressDataStr) {
+                        const progress = JSON.parse(progressDataStr);
+                        if (progress.highScore) {
+                            highScore = progress.highScore;
+                        }
+                    }
+
+                    // Load level
+                    const currentLevelInfo = await window.GameAPI.getCurrentLevel();
+                    if (currentLevelInfo && currentLevelInfo.levelHtml) {
+                        try {
+                           const levelData = JSON.parse(currentLevelInfo.levelHtml);
+                           document.getElementById('level-title').innerText = levelData.title || ('Snake - Level ' + currentLevelInfo.levelNumber);
+                           if (levelData.speed) {
+                               gameSpeed = levelData.speed;
+                           }
+                        } catch(e) {
+                           document.getElementById('level-title').innerText = 'Snake - Level ' + currentLevelInfo.levelNumber;
+                        }
+                    }
+                } catch(e) {
+                    console.error('Error initing Game API', e);
+                }
+            }
+            updateScoreDisplays();
+            spawnFood();
+            gameLoop = setTimeout(drawGame, gameSpeed);
+        };
+
+        // Initialize when API is ready
+        if (window.GameAPI) {
+            initGame();
+        } else {
+            window.addEventListener('GameAPIReady', initGame);
+        }
+    </script>
+</body>
+</html>

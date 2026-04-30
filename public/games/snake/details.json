@@ -1,0 +1,19 @@
+{
+  "id": "snake",
+  "title": "Classic Snake",
+  "description": "A more complex arcade snake game with collision detection and speed levels.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Easy Peasy\",\"speed\":150}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Getting Faster\",\"speed\":100}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3: Light Speed\",\"speed\":60}"
+    }
+  ]
+}
