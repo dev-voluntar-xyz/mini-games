@@ -1,0 +1,23 @@
+{
+  "id": "tetris",
+  "title": "Tetris",
+  "description": "A classic block puzzle game. Rotate and place falling tetrominoes to clear lines.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Slow\",\"dropSpeed\":800}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Medium\",\"dropSpeed\":500}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3: Fast\",\"dropSpeed\":250}"
+    },
+    {
+      "levelNumber": 4,
+      "levelHtml": "{\"title\":\"Level 4: Expert\",\"dropSpeed\":100}"
+    }
+  ]
+}
