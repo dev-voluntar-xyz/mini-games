@@ -1,0 +1,19 @@
+{
+  "id": "asteroids",
+  "title": "Asteroids",
+  "description": "A space shooter game where you control a ship and destroy asteroids.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Space Cadet\",\"asteroids\":3,\"asteroidSpeed\":1.0}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Space Ranger\",\"asteroids\":5,\"asteroidSpeed\":1.5}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3: Ace Pilot\",\"asteroids\":8,\"asteroidSpeed\":2.0}"
+    }
+  ]
+}
