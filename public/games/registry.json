@@ -13,5 +13,10 @@
     "id": "breakout",
     "title": "Breakout",
     "description": "A classic brick breaking game."
+  },
+  {
+    "id": "tetris",
+    "title": "Tetris",
+    "description": "A classic block-stacking puzzle game."
   }
 ]
