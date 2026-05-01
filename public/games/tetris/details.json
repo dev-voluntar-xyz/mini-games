@@ -1,0 +1,27 @@
+{
+  "id": "tetris",
+  "title": "Tetris",
+  "description": "A classic block-stacking puzzle game.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1\",\"dropSpeed\":800}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2\",\"dropSpeed\":600}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3\",\"dropSpeed\":400}"
+    },
+    {
+      "levelNumber": 4,
+      "levelHtml": "{\"title\":\"Level 4\",\"dropSpeed\":300}"
+    },
+    {
+      "levelNumber": 5,
+      "levelHtml": "{\"title\":\"Level 5\",\"dropSpeed\":200}"
+    }
+  ]
+}
