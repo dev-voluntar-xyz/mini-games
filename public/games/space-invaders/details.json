@@ -1,0 +1,19 @@
+{
+  "id": "space-invaders",
+  "title": "Space Invaders",
+  "description": "Defend the earth from an alien invasion in this classic arcade shooter.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Wave 1: Scout Party\",\"enemySpeed\":1,\"enemyRows\":3,\"enemyCols\":6}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Wave 2: Invasion Force\",\"enemySpeed\":2,\"enemyRows\":4,\"enemyCols\":8}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Wave 3: Mothership Fleet\",\"enemySpeed\":3,\"enemyRows\":5,\"enemyCols\":10}"
+    }
+  ]
+}
