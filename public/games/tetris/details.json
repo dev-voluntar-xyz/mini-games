@@ -1,0 +1,19 @@
+{
+  "id": "tetris",
+  "title": "Tetris",
+  "description": "Classic block stacking game. Clear lines to score points and advance levels.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: Slow Drop\",\"speed\":800}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Medium Drop\",\"speed\":500}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3: Fast Drop\",\"speed\":300}"
+    }
+  ]
+}
