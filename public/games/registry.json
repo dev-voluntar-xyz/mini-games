@@ -13,5 +13,10 @@
     "id": "breakout",
     "title": "Breakout",
     "description": "A classic brick breaking game."
+  },
+  {
+    "id": "asteroids",
+    "title": "Asteroids",
+    "description": "A classic space shooter where you destroy asteroids."
   }
 ]
