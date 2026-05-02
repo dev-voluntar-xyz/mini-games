@@ -13,5 +13,10 @@
     "id": "breakout",
     "title": "Breakout",
     "description": "A classic brick breaking game."
+  },
+  {
+    "id": "space-invaders",
+    "title": "Space Invaders",
+    "description": "Defend the earth from an alien invasion in this classic arcade shooter."
   }
 ]
