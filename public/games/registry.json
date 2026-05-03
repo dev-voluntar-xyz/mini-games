@@ -18,5 +18,10 @@
     "id": "asteroids",
     "title": "Asteroids",
     "description": "A classic space shooter where you destroy asteroids."
+  },
+  {
+    "id": "spaceinvaders",
+    "title": "Space Invaders",
+    "description": "A classic space invaders game where you defend Earth from alien hordes."
   }
 ]
