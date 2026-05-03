@@ -1,0 +1,19 @@
+{
+  "id": "spaceinvaders",
+  "title": "Space Invaders",
+  "description": "A classic space invaders game where you defend Earth from alien hordes.",
+  "levels": [
+    {
+      "levelNumber": 1,
+      "levelHtml": "{\"title\":\"Level 1: First Wave\",\"rows\":3,\"cols\":6,\"speed\":1}"
+    },
+    {
+      "levelNumber": 2,
+      "levelHtml": "{\"title\":\"Level 2: Escalation\",\"rows\":4,\"cols\":8,\"speed\":1.5}"
+    },
+    {
+      "levelNumber": 3,
+      "levelHtml": "{\"title\":\"Level 3: Invasion\",\"rows\":5,\"cols\":10,\"speed\":2}"
+    }
+  ]
+}
